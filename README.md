@@ -1,5 +1,5 @@
-# auto-local-document-finetuner
-auto-local-document-finetuner is a Python project based on MLX that generates synthetic question-answer pairs from a given text corpus locally, finetunes a language model using the generated data, and deploys the finetuned model for inference. This project is particularly useful for creating domain-specific chatbots or question-answering systems in various fields. It is perfect for on-premise enterprise implementations.
+# automatic-learning-amplifier
+automatic-learning-amplifier is a Python project based on MLX that generates synthetic question-answer pairs from a given text corpus locally, finetunes a language model using the generated data, and deploys the finetuned model for inference. This project is particularly useful for creating domain-specific chatbots or question-answering systems in various fields. It is perfect for on-premise enterprise implementations.
 
 ## Features
 
