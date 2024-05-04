@@ -13,6 +13,7 @@ automatic-local-document-finetuner.code-workspace
 axolotl_config_llama-8b_fft.yml
 backup_v1/
 backup_v2/
+backup_v3/
 combine.py
 fetch_translation.py
 last_processed_row.txt

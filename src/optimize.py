@@ -6,7 +6,7 @@ from mlx_lm.utils import load, generate
 from json_extractor import extract_json
 from setup_and_parse import BaseModelPaths
 
-def optimize(prompt, file_contents):
+def optimize(prompt, text_chunks):
     base_paths = BaseModelPaths()
     json_file_path = 'optimization_data.json'
     graph_folder = 'graphs'
@@ -58,8 +58,8 @@ def optimize(prompt, file_contents):
         for h in max_tokens_array:
             attempt = 0
             while attempt < retries:
-                for file_content in file_contents:
-                    combined_prompt = f'{prompt}<text_corpus>{file_content}</text_corpus><|eot_id|><|start_header_id|>assistant<|end_header_id|><json_output>'
+                for text_chunk in text_chunks:
+                    combined_prompt = f'{prompt}<text_corpus>{text_chunk}</text_corpus><|eot_id|><|start_header_id|>assistant<|end_header_id|><json_output>'
                     response_content = generate(model, tokenizer, combined_prompt, temp=j, max_tokens=h, verbose=True)
                     jsonl_data = extract_json(response_content)
                     if jsonl_data:

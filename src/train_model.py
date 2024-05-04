@@ -36,7 +36,9 @@ def train_model(args):
             "--learning-rate", str(lr), 
             "--adapter-path", str(folders.ft_folder)
         ]
-        subprocess.run(command, check=True)
+        with st.spinner(f"Finetuning {base_paths.get_model_path('fp16')} with LoRA..."):
+            subprocess.run(command, check=True)
+        
         print("Fusing the model with the adapter...")
         command = [
             sys.executable,
@@ -45,7 +47,8 @@ def train_model(args):
             "--adapter-path", folders.lora_folder, 
             "--save-path", folders.lora_folder
         ]
-        subprocess.run(command, check=True)
+        with st.spinner("Fusing the model with the adapter..."):
+            subprocess.run(command, check=True)
     elif args.ft_type == "qlora":
         print(f"Finetuning {base_paths.get_model_path('mlx_4bit')} using QLoRA...")
         command = [
@@ -70,7 +73,7 @@ def train_model(args):
             "--adapter-path", folders.ft_folder, 
             "--save-path", folders.ft_folder
         ]
-        with st.spinner("Fusing finetuned model with adapter..."):
+        with st.spinner("Fusing Finetuned Model with Adapter..."):
             subprocess.run(command, check=True)
         
         if args.gguf:

@@ -1,0 +1,33 @@
+Here is a summary of the key mathematical concepts, equations, problem-solving strategies, and applications covered in this content:
+
+**Mathematical Concepts:**
+
+* Neural networks (KANs and MLPs)
+* Partial differential equations (PDEs)
+* Continual learning
+* Catastrophic forgetting
+* Interpretable neural networks
+* Unsupervised learning
+* Topological invariants (in knot theory)
+
+**Equations:**
+
+* PDE: uxx + uyy = f(x, y)
+* Loss function: loss_pde = α * loss_i + loss_b
+* Unsupervised learning: f(x1,..., xd) ≈ 0
+* Supervised learning: y ≈ f(x1,..., xd)
+
+**Problem-Solving Strategies:**
+
+* Auto-discovered KAN shapes
+* Pruning KANs to achieve reasonable loss
+* Using KANs to solve PDEs
+* Using KANs to avoid catastrophic forgetting
+* Using KANs for unsupervised learning
+
+**Applications:**
+
+* Solving PDEs (e.g., Poisson equation)
+* Continual learning (e.g., avoiding catastrophic forgetting)
+* Interpretable neural networks (e.g., revealing compositional structures)
+* Un
