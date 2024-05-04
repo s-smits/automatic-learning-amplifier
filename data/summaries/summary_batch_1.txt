@@ -1,0 +1,13 @@
+Here is a summary of the key mathematical concepts, equations, problem-solving strategies, and applications covered in the content:
+
+**Mathematical Concepts:**
+
+1. Kolmogorov-Arnold representation theorem: a theorem that states that a multivariate continuous function can be written as a finite composition of continuous functions of a single variable and the binary operation of addition.
+2. Kolmogorov-Arnold networks (KANs): a type of neural network inspired by the Kolmogorov-Arnold representation theorem, which replaces traditional activation functions with learnable activation functions on edges.
+3. B-spline curves: a type of curve that can be used to parametrize univariate functions.
+
+**Equations:**
+
+1. Kolmogorov-Arnold representation theorem equation: f(x) = 2n+1∑q=1Φqn∑p=1ϕq,p(xp)
+2. KAN architecture equation: KAN(x) = (ΦL−1◦ΦL−2◦ ··· ◦ Φ1◦Φ0)x
+3. MLP equation: MLP(x) = (WL−1◦σ◦WL−2◦σ◦ ···

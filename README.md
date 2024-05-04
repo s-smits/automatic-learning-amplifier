@@ -71,6 +71,8 @@ automatic-learning-amplifier is a Python project based on MLX that generates syn
    - `--lora`: Finetune the model with LoRA (default: False)
    - `--qlora`: Finetune the model with QLoRA (default: True)
    - `--gguf`: Convert and infer the model with GGUF (default: False)
+   - `--compare_initial`: Compare the performance of the finetuned model with the initial local model (default: True)
+   - `--compare_anthropic`: Compare the performance of the finetuned model with Haiku (note: the generated questions will be sent to the API) (default: True)
    - `--compare`: Compare the performance of the finetuned model with the non-finetuned model (default: True)
 
 3. The script will generate synthetic question-answer pairs, finetune the language model, and deploy the finetuned model for inference and comparison with the original model.

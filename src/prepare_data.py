@@ -164,7 +164,7 @@ def process_file(file_path, file_type, file_index, args):
     else:
         return None
 
-def concatenate_files(folders, file_queue, args, all_data, file_contents):
+def concatenate_files(folders, file_queue, args, text_chunks):
     output_folder = folders.prepared_data_folder
     file_index = 1
     chunk_index = 1
@@ -192,8 +192,7 @@ def concatenate_files(folders, file_queue, args, all_data, file_contents):
                         chunk_words = current_chunk[:args.word_limit]
                         with open(os.path.join(output_folder, output_file), 'w') as out_file:
                             out_file.write(' '.join(chunk_words) + '\n')
-                        all_data.extend(chunk_words)
-                        file_contents.extend(chunk_words)
+                        text_chunks.extend(chunk_words)
 
                         # Reset for new chunk with overlap
                         current_chunk = current_chunk[args.word_limit - overlap_word_count:]
@@ -207,8 +206,7 @@ def concatenate_files(folders, file_queue, args, all_data, file_contents):
         output_file = f"output_file_{file_index}_{chunk_index}_{args.word_limit}.txt"
         with open(os.path.join(output_folder, output_file), 'w') as out_file:
             out_file.write(' '.join(current_chunk) + '\n')
-        all_data.extend(current_chunk)
-        file_contents.extend(current_chunk)
+        text_chunks.extend(current_chunk)
         chunk_index += 1
         
     return chunk_index - 1
@@ -229,7 +227,6 @@ def file_processor(folders, args):
         print("No files found in the input folder.")
         return [], []
 
-    all_data = []
-    file_contents = []
-    concatenate_files(folders, file_queue, args, all_data, file_contents)
-    return all_data, file_contents
+    text_chunks = []
+    concatenate_files(folders, file_queue, args, text_chunks)
+    return text_chunks

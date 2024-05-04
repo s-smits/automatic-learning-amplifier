@@ -1,4 +1,4 @@
-# setup_and_parse.py (refactored)
+# setup_and_parse.py
 
 import argparse
 import os
@@ -16,7 +16,7 @@ class BaseModelPaths:
             'fp16': 'abacusai/Llama-3-Smaug-8B',
             'mlx_4bit': 'mlx-community/Meta-Llama-3-8B-Instruct-4bit',
             'gguf': 'bartowski/Llama-3-Smaug-8B-GGUF/LLama-3-Smaug-8B-Q5_K_M.gguf',
-            'mlx_4bit_long_context': 'mlx-community/Phi-3-mini-128k-instruct-4bit',
+            'mlx_4bit_long_context': 'mlx-community/Meta-Llama-3-8B-Instruct-4bit',
             'mlx_image': 'mlx-community/llava-1.5-7b-4bit'
         }
 
@@ -31,12 +31,14 @@ class FolderPaths:
         self.image_folder = os.path.join(self.base_dir, "data", "images")
         self.json_data_folder = os.path.join(self.base_dir, "data", "qa_json")
         self.finetune_data_folder = os.path.join(self.base_dir, "data", "data_ft")
+        self.summaries_folder = os.path.join(self.base_dir, "data", "summaries")
+        
         if args.ft_type == "lora":
             self.ft_folder = os.path.join(self.base_dir, "models", "lora")
         elif args.ft_type == "qlora":
             self.ft_folder = os.path.join(self.base_dir, "models", "qlora")
         self.create_folders()
-
+    
     def create_folders(self):
         folders = [
             self.prepared_data_folder, self.image_folder,
@@ -58,11 +60,11 @@ class FolderPaths:
                 except FileNotFoundError:
                     # If the file is already deleted, ignore the error
                     pass
-                os.makedirs(folder)
+                os.makedirs(folder, exist_ok=True)  # Use exist_ok=True to suppress the error if the folder already exists
 
         # Clear files inside the documents folder, but don't delete the folder itself
         if os.path.exists(self.documents_folder) and os.listdir(self.documents_folder):
-            for root, dirs, files in os.walk(self.documents_folder):
+            for root, _, files in os.walk(self.documents_folder):
                 for file in files:
                     try:
                         os.unlink(os.path.join(root, file))
@@ -100,7 +102,7 @@ def parse_arguments():
     summary_group = parser.add_argument_group('Summary Arguments')
     summary_choices = ['math', 'science', 'history', 'geography', 'english', 'art', 'music', 'education', 'computer science', 'drama']
     summary_group.add_argument("--add_summary", choices=summary_choices, help="Add a short summary to each prompt from every 10 document files.")
-    summary_group.add_argument("--summary_batch_size", type=int, default=5, help="Batch size for summarizing documents.")
+    summary_group.add_argument("--summary_batch_size", type=int, default=2, help="Batch size for summarizing documents.")
 
     args = parser.parse_args()
 
