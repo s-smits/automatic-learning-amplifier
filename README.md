@@ -1,9 +1,5 @@
-```markdown
-# auto-local-document-finetuner
-
-Here is a slightly improved version of the text:
-
-auto-local-document-finetuner is a Python project that generates synthetic question-answer pairs from a given text corpus locally, finetunes a language model using the generated data, and deploys the finetuned model for inference. This project is particularly useful for creating domain-specific chatbots or question-answering systems in various fields. It is perfect for on-premise enterprise implementations.
+# automatic-learning-amplifier
+automatic-learning-amplifier is a Python project based on MLX that generates synthetic question-answer pairs from a given text corpus locally, finetunes a language model using the generated data, and deploys the finetuned model for inference. This project is particularly useful for creating domain-specific chatbots or question-answering systems in various fields. It is perfect for on-premise enterprise implementations.
 
 ## Features
 
@@ -77,6 +73,7 @@ auto-local-document-finetuner is a Python project that generates synthetic quest
    - `--gguf`: Convert and infer the model with GGUF (default: False)
    - `--compare_initial`: Compare the performance of the finetuned model with the initial local model (default: True)
    - `--compare_anthropic`: Compare the performance of the finetuned model with Haiku (note: the generated questions will be sent to the API) (default: True)
+   - `--compare`: Compare the performance of the finetuned model with the non-finetuned model (default: True)
 
 3. The script will generate synthetic question-answer pairs, finetune the language model, and deploy the finetuned model for inference and comparison with the original model.
 
@@ -147,4 +144,3 @@ This project is licensed under the [Apache 2.0](LICENSE).
 ## Disclaimer
 
 This project has been primarily tested with the LLaMA-3-8B model. Using other models may result in poorly parsed JSON outputs. Please exercise caution and verify the generated data when using different models.
-```
