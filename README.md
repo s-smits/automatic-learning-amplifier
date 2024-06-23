@@ -56,7 +56,7 @@ automatic-learning-amplifier is a Python project based on MLX that generates syn
 
 2. Run the `main.py` script with the desired arguments:
    ```
-   python main.py [--local] [--openrouter] [--claude] [--word_limit WORD_LIMIT] [--question_amount QUESTION_AMOUNT] [--focus {processes,knowledge,formulas}] [--images] [--optimize] [--add_summary {math,science,history,geography,english,art,music,education,computer science,drama}] [--verify] [--test_size TEST_SIZE] [--lora] [--qlora] [--gguf] [--compare]
+   streamlit run src/app.py [--local] [--openrouter] [--claude] [--word_limit WORD_LIMIT] [--question_amount QUESTION_AMOUNT] [--focus {processes,knowledge,formulas}] [--images] [--optimize] [--add_summary {math,science,history,geography,english,art,music,education,computer science,drama}] [--verify] [--test_size TEST_SIZE] [--lora] [--qlora] [--gguf] [--compare]
    ```
 
    - `--local`, `--openrouter`, or `--claude`: Choose the inference method (default: `--local`)
