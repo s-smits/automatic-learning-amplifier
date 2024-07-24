@@ -45,8 +45,7 @@ automatic-learning-amplifier is a Python project based on MLX that generates syn
    poetry install
    ```
 
-3. Set up the necessary environment variables if using OpenAI, Claude or OpenRouter:
-   - 'OPENAI_API_KEY': Your OpenAI API key
+3. Set up the necessary environment variables if using Claude or OpenRouter:
    - 'CLAUDE_API_KEY': Your Anthropic Claude API key
    - 'OPENROUTER_API_KEY': Your OpenRouter API key
 
