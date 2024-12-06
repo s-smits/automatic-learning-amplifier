@@ -20,7 +20,7 @@ automatic-learning-amplifier is a Python project based on MLX that generates syn
 
 1. Clone the repository:
    ```
-   git clone https://github.com/s_smits/automatic-learning-amplifier.git
+   git clone https://github.com/s-smits/automatic-learning-amplifier
    ```
 
 2. Install the required dependencies:
@@ -32,7 +32,7 @@ automatic-learning-amplifier is a Python project based on MLX that generates syn
 
 1. Clone the repository:
    ```
-   git clone https://github.com/s_smits/automatic-learning-amplifier.git
+   git clone https://github.com/s-smits/automatic-learning-amplifier
    ```
 
 2. Install Poetry if you haven't already:
