@@ -23,8 +23,9 @@ automatic-learning-amplifier is a Python project based on MLX that generates syn
    git clone https://github.com/s-smits/automatic-learning-amplifier
    ```
 
-2. Install the required dependencies:
+2. Navigate to the folder and install the required dependencies:
    ```
+   cd automatic-learning-amplifier
    pip install -r requirements.txt
    ```
 
@@ -40,12 +41,15 @@ automatic-learning-amplifier is a Python project based on MLX that generates syn
    pip install poetry
    ```
 
-3. Install the project dependencies:
+3. Naviagate to the folder and install the project dependencies:
    ```
+   cd automatic-learning-amplifier
    poetry install
    ```
 
-3. Set up the necessary environment variables if using Claude or OpenRouter:
+## Set-up environment
+
+Set up the necessary environment variables if using Claude or OpenRouter:
    - 'CLAUDE_API_KEY': Your Anthropic Claude API key
    - 'OPENROUTER_API_KEY': Your OpenRouter API key
 
