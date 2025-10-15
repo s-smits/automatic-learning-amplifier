@@ -1,26 +1,28 @@
-import streamlit as st
-from stqdm import stqdm
-from compare import compare_initial, compare_anthropic
-from setup_and_parse import initialize_setup, FolderPaths
-from data_processing import load_prepared_data
-from generate_questions import generate_questions
-from summarize_documents import summarize_documents
-import os
-from train_model import train_model
-from deploy import deploy_models
 import json
 
-def clear_folders_once(args):
-    if 'folders_cleared' not in st.session_state:
-        folders = FolderPaths(args)  # Assuming args is defined or passed to this function
+import streamlit as st
+from stqdm import stqdm
+
+from ala.config import FolderPaths, initialize_setup
+from ala.data import load_prepared_data
+from ala.deploy import deploy_models
+from ala.models import compare_anthropic, compare_initial, train_model
+from ala.qa import generate_questions, summarize_documents
+
+def clear_folders_once(folders):
+    if "folders_cleared" not in st.session_state:
         folders.clear_folders()
-        st.session_state['folders_cleared'] = True
+        st.session_state["folders_cleared"] = True
 
 def main():
-    args, summary_choices = initialize_setup()
+    try:
+        args, summary_choices = initialize_setup()
+    except ValueError as error:
+        st.error(str(error))
+        return
+
     folders = FolderPaths(args)
-    # Clear folders before starting the app
-    clear_folders_once(args)
+    clear_folders_once(folders)
     
     st.set_page_config(
         page_title="Automated Learning Amplifier",
@@ -43,9 +45,8 @@ def main():
             # Save uploaded files to a directory
             save_path = folders.documents_folder
             for uploaded_file in uploaded_files:
-                file_path = os.path.join(save_path, uploaded_file.name)
-                with open(file_path, "wb") as f:
-                    f.write(uploaded_file.getbuffer())
+                file_path = save_path / uploaded_file.name
+                file_path.write_bytes(uploaded_file.getbuffer())
             st.toast(f"Saved {len(uploaded_files)} files.")
 
     # Create a container for all other UI components
@@ -130,7 +131,7 @@ def main():
         with col11:
             initial_value = 3e-6
             args.learning_rate = st.number_input("Learning Rate (recommended: 2e⁻⁶ - 6e⁻⁶)", min_value=1e-7, max_value=1e-2, value=initial_value, step=1e-6, format="%.1e")
-        folders = FolderPaths(args)  # Initialize folders
+        folders = FolderPaths(args)
         
         def click_launch(uploaded_files):
             # Setup logging, create folders, and parse arguments
@@ -170,9 +171,9 @@ def main():
     results_container = st.container()
     with results_container:
         if args.compare_initial or args.compare_anthropic:
-            val_file_path = os.path.join(folders.finetune_data_folder, "valid.jsonl")
-            if os.path.exists(val_file_path):
-                with open(val_file_path, 'r') as file:
+            val_file_path = folders.finetune_data_folder / "valid.jsonl"
+            if val_file_path.exists():
+                with val_file_path.open('r') as file:
                     total_lines = sum(1 for _ in file)
                     file.seek(0)  # Reset file pointer to the beginning
                     for i, line in stqdm(enumerate(file), total=total_lines, desc="Comparing evaluation samples..."):

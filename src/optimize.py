@@ -1,27 +1,30 @@
 import json
-import os
 import logging
+import os
+from pathlib import Path
+
 import matplotlib.pyplot as plt
-from mlx_lm.utils import load, generate
-from json_extractor import extract_json
-from setup_and_parse import BaseModelPaths
+from mlx_lm.utils import generate, load
+
+from ala.config import BaseModelPaths
+from ala.utils import extract_json
 
 def optimize(prompt, text_chunks):
     base_paths = BaseModelPaths()
-    json_file_path = 'optimization_data.json'
-    graph_folder = 'graphs'
-    os.makedirs(graph_folder, exist_ok=True)  # Ensure the graph folder exists
+    json_file_path = Path('optimization_data.json')
+    graph_folder = Path('graphs')
+    graph_folder.mkdir(parents=True, exist_ok=True)
     retries = 3  # Define the number of retries as needed
 
     def load_or_initialize_json(filepath):
-        if os.path.exists(filepath):
-            with open(filepath, 'r') as file:
+        if Path(filepath).exists():
+            with Path(filepath).open('r') as file:
                 return json.load(file)
         else:
             return []
 
     def save_json(data, filepath):
-        with open(filepath, 'w') as file:
+        with Path(filepath).open('w') as file:
             json.dump(data, file, indent=4)
 
     def visualize_data_distribution(json_data_list, graph_folder):
@@ -45,7 +48,7 @@ def optimize(prompt, text_chunks):
         plt.ylabel('Word Count')
 
         plt.tight_layout()
-        plt.savefig(os.path.join(graph_folder, 'data_distribution.png'))
+        plt.savefig(graph_folder / 'data_distribution.png')
         plt.show()
 
     json_data_list = load_or_initialize_json(json_file_path)
