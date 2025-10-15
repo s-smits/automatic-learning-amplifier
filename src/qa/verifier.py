@@ -7,8 +7,8 @@ import json
 
 from mlx_lm.utils import generate, load
 
-from ala.config import BaseModelPaths
-from ala.utils import extract_json
+from config import BaseModelPaths
+from utils import extract_json
 
 
 def verify_outputs(jsonl_data, text_chunk, args) -> bool:

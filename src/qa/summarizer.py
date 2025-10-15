@@ -6,7 +6,7 @@ import mlx.core as mx
 from mlx_lm.utils import generate, load
 from stqdm import stqdm
 
-from ala.config import BaseModelPaths
+from config import BaseModelPaths
 
 
 def add_summary(model, tokenizer, text_chunks: str, args) -> str:

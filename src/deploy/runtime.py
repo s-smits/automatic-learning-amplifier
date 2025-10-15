@@ -9,7 +9,7 @@ from pathlib import Path
 
 import mlx.core as mx
 
-from ala.config import BaseModelPaths, FolderPaths
+from config import BaseModelPaths, FolderPaths
 
 
 def deploy_models(args) -> None:

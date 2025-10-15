@@ -3,11 +3,11 @@ import json
 import streamlit as st
 from stqdm import stqdm
 
-from ala.config import FolderPaths, initialize_setup
-from ala.data import load_prepared_data
-from ala.deploy import deploy_models
-from ala.models import compare_anthropic, compare_initial, train_model
-from ala.qa import generate_questions, summarize_documents
+from config import FolderPaths, initialize_setup
+from data import load_prepared_data
+from deploy import deploy_models
+from models import compare_anthropic, compare_initial, train_model
+from qa import generate_questions, summarize_documents
 
 def clear_folders_once(folders):
     if "folders_cleared" not in st.session_state:

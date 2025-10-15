@@ -11,8 +11,8 @@ import streamlit as st
 from mlx_lm.utils import generate, load
 from stqdm import stqdm
 
-from ala.config import BaseModelPaths
-from ala.utils import extract_json, jsonl_split, merge_json_to_jsonl
+from config import BaseModelPaths
+from utils import extract_json, jsonl_split, merge_json_to_jsonl
 
 from .verifier import verify_outputs
 

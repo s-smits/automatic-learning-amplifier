@@ -1,4 +1,4 @@
-from ala.config import initialize_setup
+from config import initialize_setup
 
 args, _ = initialize_setup()
 
@@ -6,7 +6,7 @@ def compare_anthropic(args, sample):
     import anthropic
     import os
     from mlx_lm.utils import load
-    from ala.config import FolderPaths
+    from config import FolderPaths
     
     def create_eval_prompt(question):
         return f'''<system>You are a helpful assistant.</system><prompt>{question}</prompt>'''

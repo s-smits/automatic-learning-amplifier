@@ -9,7 +9,7 @@ from typing import Iterable
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from ala.config import FolderPaths
+from config import FolderPaths
 
 
 def merge_json_to_jsonl(output_file: Path, args) -> None:

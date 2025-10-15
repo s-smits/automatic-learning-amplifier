@@ -9,9 +9,9 @@ PROJECT_SRC = Path(__file__).resolve().parents[1] / "src"
 if str(PROJECT_SRC) not in sys.path:
     sys.path.insert(0, str(PROJECT_SRC))
 
-from ala.config.setup import parse_arguments
-from ala.data.processing import load_prepared_data
-from ala.config.paths import FolderPaths
+from config.setup import parse_arguments
+from data.processing import load_prepared_data
+from config.paths import FolderPaths
 
 
 class TestFolderPaths(unittest.TestCase):

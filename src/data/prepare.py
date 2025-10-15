@@ -15,7 +15,7 @@ from docx import Document
 from pptx import Presentation
 from pypdf import PdfReader
 
-from ala.config import BaseModelPaths, FolderPaths
+from config import BaseModelPaths, FolderPaths
 
 
 def caption_image_file(image_path: Path) -> str:

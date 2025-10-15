@@ -28,7 +28,7 @@ class FolderPaths:
     """Resolve and manage runtime directories for the pipeline."""
 
     def __init__(self, args) -> None:
-        self.base_dir = Path(__file__).resolve().parents[3]
+        self.base_dir = Path(__file__).resolve().parents[2]
         data_dir = self.base_dir / "data"
 
         self.documents_folder = data_dir / "documents"
@@ -41,7 +41,7 @@ class FolderPaths:
         self.create_folders()
 
     def _resolve_ft_folder(self, ft_type: str) -> Path:
-        models_dir = Path(__file__).resolve().parents[3] / "models"
+        models_dir = Path(__file__).resolve().parents[2] / "models"
         if ft_type not in {"lora", "qlora"}:
             raise ValueError(f"Unsupported ft_type '{ft_type}'. Expected 'lora' or 'qlora'.")
         return models_dir / ft_type

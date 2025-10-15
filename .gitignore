@@ -21,6 +21,7 @@ llama.cpp/
 logs/
 mlx-ui/
 models/
+!src/models/
 mylist.txt
 optimization_data*.json
 paper-examples/

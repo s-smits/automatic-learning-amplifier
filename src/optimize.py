@@ -6,8 +6,8 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 from mlx_lm.utils import generate, load
 
-from ala.config import BaseModelPaths
-from ala.utils import extract_json
+from config import BaseModelPaths
+from utils import extract_json
 
 def optimize(prompt, text_chunks):
     base_paths = BaseModelPaths()
