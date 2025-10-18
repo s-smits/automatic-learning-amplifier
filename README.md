@@ -1,160 +1,71 @@
 # automatic-learning-amplifier
-automatic-learning-amplifier is a Python project based on MLX that generates synthetic question-answer pairs from a given text corpus locally, finetunes a language model using the generated data, and deploys the finetuned model for inference. This project is particularly useful for creating domain-specific chatbots or question-answering systems in various fields. It is perfect for on-premise enterprise implementations.
+automatic-learning-amplifier turns raw documents into synthetic QA datasets, fine-tunes LLaMA-3 locally with MLX, and serves the tuned models for evaluation or deployment without leaving your own hardware.
 
-## Features
+## Why automatic-learning-amplifier
+- **Document-first ingestion:** Handles PDF, DOCX, PPTX, HTML, and TXT, optionally captioning embedded images via `mlx_vlm` so visual context feeds the model.
+- **Agentic QA generation:** Uses local 4-bit LLaMA-3 to craft diverse question/answer pairs, enriches prompts with subject-aware summaries, and tags low-confidence items through an automated verifier.
+- **Built-in finetuning loop:** Streams verified QA into MLX LoRA/QLoRA trainers, fuses adapters, and can emit GGUF-ready artifacts for lightweight runtimes.
+- **Evaluation & deployment hooks:** Compares tuned vs. baseline (or Anthropic) responses and can spin up `mlx-ui` so teams can chat with both models side by side.
 
-- Generates specific, synthetic question-answer pairs from a large text corpus using LLaMA-3-8B with MLX or GGUF back-end
-- Verifies the correctness of the generated question-answer pairs (optional)
-- Analyzes the specificity of the generated questions and answers (optional)
-- Supports local, OpenAI, OpenRouter, and Claude models for inference
-- Automatically finetunes the LLaMA-3-8B model using the generated data with (Q)LoRA
-- Converts the finetuned model to MLX or GGUF format for efficient inference
-- Quantizes the model to reduce memory footprint without significant loss in perplexity
-- Deploys the finetuned model for inference
-- Compares the performance of the finetuned model with the original model
+## Pipeline at a glance
+1. **Document staging** – `data.prepare.file_processor` indexes uploaded files, extracts text, captures captions (when `--images` is set), and chunks content with configurable overlap.
+2. **Optional summaries** – `qa.summarizer` batches chunks, generates subject-focused abstracts (`--add_summary`, `--summary_batch_size`), and stores them for downstream prompting.
+3. **QA synthesis** – `qa.generator` prompts LLaMA-3 with tailored instructions, attaches summaries when present, and writes JSON payloads per chunk.
+4. **Verification & splitting** – `qa.verifier` validates each QA pair, `utils.jsonl` merges records, filters to validated data, and creates train/validation JSONL splits.
+5. **Fine-tuning** – `models.training` wraps `mlx_lm.lora` to train adapters (LoRA or QLoRA), fuses weights, and prepares artifacts under `models/<ft_type>`.
+6. **Assessment & deploy** – `models.comparison` benchmarks tuned answers against baseline or Anthropic Haiku, while `deploy.runtime` optionally clones `mlx-ui` to host side-by-side chats.
 
+## Quick start
+**Prerequisites:** Python 3.11+, [uv](https://docs.astral.sh/uv/), Apple silicon (recommended for MLX acceleration). Install Node.js 20+ only if you plan to extend the UI.
 
-## Installation
+```bash
+# Set up environment
+uv venv .venv
+uv sync
 
-### Using pip
+# Stage documents and launch the Streamlit orchestration UI
+mkdir -p data/documents
+cp /path/to/your/*.pdf data/documents/
+uv run streamlit run src/app.py -- --local
 
-1. Clone the repository:
-   ```
-   git clone https://github.com/s-smits/automatic-learning-amplifier
-   ```
+# (Optional) adjust defaults from the CLI parser
+uv run python -m config.setup --help
+```
 
-2. Navigate to the folder and install the required dependencies:
-   ```
-   cd automatic-learning-amplifier
-   pip install -r requirements.txt
-   ```
+Set `CLAUDE_API_KEY` and/or `OPENROUTER_API_KEY` in your shell when enabling those providers via the UI toggles.
 
-### Using Poetry
+## Key runtime switches
+- **Generation controls:** `--word_limit`, `--question_amount`, `--focus` (processes/knowledge/formulas), `--images` for captioning, `--add_summary` plus `--summary_batch_size` for subject-specific context.
+- **Verification & quality:** Enable `--verify` to add `validate` flags before dataset splitting; adjust `--retries`, `--starting_index`, `--ending_index`, and `--overlap` for large corpora.
+- **Finetuning knobs:** Choose LoRA vs. QLoRA (`--ft_type`), set `--lora_layers`, `--epochs`, `--learning_rate`, precision (`--q4`/`--fp16`), and export GGUF-ready outputs with `--gguf`.
+- **Evaluation & deployment:** Toggle comparisons against the initial model or Anthropic, and enable `--deploy` to boot `mlx-ui` once adapters are fused.
 
-1. Clone the repository:
-   ```
-   git clone https://github.com/s-smits/automatic-learning-amplifier
-   ```
+## Project layout
+```
+src/
+├── app.py            # Streamlit entry point orchestrating the full run
+├── config/           # Argument parsing, folder management, base model registry
+├── data/             # Document readers, chunking, and prepared-data loaders
+├── qa/               # Summaries, QA generation, verification utilities
+├── models/           # Finetuning wrappers and response comparison helpers
+├── deploy/           # mlx-ui bootstrap for serving finetuned models
+└── utils/            # JSON extraction helpers and train/val splitting logic
+data/
+├── documents/        # Drop source corpora here
+├── data_prepared/    # Chunked text produced during processing
+├── qa_json/          # Raw QA outputs per chunk
+├── data_ft/          # train.jsonl / valid.jsonl for MLX LoRA
+├── summaries/        # Cached summaries (when enabled)
+└── images/           # Saved images + captions (when enabled)
+models/
+└── {qlora|lora}/     # Finetuned adapters and fused weights
+```
 
-2. Install Poetry if you haven't already:
-   ```
-   pip install poetry
-   ```
+## Testing
+Run the automated checks (mirrors CI) with:
 
-3. Naviagate to the folder and install the project dependencies:
-   ```
-   cd automatic-learning-amplifier
-   poetry install
-   ```
+```bash
+uv run pytest
+```
 
-## Set-up environment
-
-Set up the necessary environment variables if using Claude or OpenRouter:
-   - 'CLAUDE_API_KEY': Your Anthropic Claude API key
-   - 'OPENROUTER_API_KEY': Your OpenRouter API key
-
-## Usage
-
-1. Prepare your text corpus in the `data/documents` folder.
-
-2. Run the `main.py` script with the desired arguments:
-   ```
-   streamlit run src/app.py [--local] [--openrouter] [--claude] [--word_limit WORD_LIMIT] [--question_amount QUESTION_AMOUNT] [--focus {processes,knowledge,formulas}] [--images] [--optimize] [--add_summary {math,science,history,geography,english,art,music,education,computer science,drama}] [--verify] [--test_size TEST_SIZE] [--lora] [--qlora] [--gguf] [--compare]
-   ```
-
-   - `--local`, `--openrouter`, or `--claude`: Choose the inference method (default: `--local`)
-   - `--word_limit`: Set the word limit for each chunk (default: 1000)
-   - `--question_amount`: Set the number of question-answer pairs to generate (default: 5)
-   - `--focus`: Choose the focus for generating questions (options: `processes`, `knowledge`, `formulas`)
-   - `--images`: Generate captions for images in the documents (default: False)
-   - `--optimize`: Activate optimization mode (default: False)
-   - `--add_summary`: Add a short summary to each prompt from every 5 document files to give the model more context in order to generate better questions (options: 'general', `math`, `science`, `history`, `geography`, `english`, `art`, `music`, `education`, `computer science`, `drama`) (default: None)
-   - `--verify`: Verify the generated questions and answers (default: False)
-   - `--test_size`: Set the test size for splitting the data into training and validation sets (default: 0.1)
-   - `--lora`: Finetune the model with LoRA (default: False)
-   - `--qlora`: Finetune the model with QLoRA (default: True)
-   - `--gguf`: Convert and infer the model with GGUF (default: False)
-   - `--compare_initial`: Compare the performance of the finetuned model with the initial local model (default: True)
-   - `--compare_anthropic`: Compare the performance of the finetuned model with Haiku (note: the generated questions will be sent to the API) (default: True)
-   - `--compare`: Compare the performance of the finetuned model with the non-finetuned model (default: True)
-
-3. The script will generate synthetic question-answer pairs, finetune the language model, and deploy the finetuned model for inference and comparison with the original model.
-
-## Folder Structure
-
-- `data/`: Contains the text corpus and generated data
-- `documents/`: Place your documents here (Supported file types: PDF, TXT, DOCX, PPTX, HTML)
-- `data_prepared/`: Prepared data for finetuning
-- `data_ft/`: Finetuning data (train and eval splits)
-- `qa_json/`: Generated question-answer pairs in JSON format
-- `logs/`: Contains log files
-- `models/`: Contains the finetuned model and adapter file
-- `src/`: Contains the source code files
-
-## Why MLX?
-
-MLX is an array framework for machine learning research on Apple silicon,
-brought to you by Apple machine learning research.
-
-Some key features of MLX include:
-
-- **Familiar APIs**: MLX has a Python API that closely follows NumPy.  MLX
-   also has fully featured C++, [C](https://github.com/ml-explore/mlx-c), and
-   [Swift](https://github.com/ml-explore/mlx-swift/) APIs, which closely mirror
-   the Python API.  MLX has higher-level packages like `mlx.nn` and
-   `mlx.optimizers` with APIs that closely follow PyTorch to simplify building
-   more complex models.
-
-- **Composable function transformations**: MLX supports composable function
-   transformations for automatic differentiation, automatic vectorization,
-   and computation graph optimization.
-
-- **Lazy computation**: Computations in MLX are lazy. Arrays are only
-   materialized when needed.
-
-- **Dynamic graph construction**: Computation graphs in MLX are constructed
-   dynamically. Changing the shapes of function arguments does not trigger
-   slow compilations, and debugging is simple and intuitive.
-
-- **Multi-device**: Operations can run on any of the supported devices
-   (currently the CPU and the GPU).
-
-- **Unified memory**: A notable difference from MLX and other frameworks
-   is the *unified memory model*. Arrays in MLX live in shared memory.
-   Operations on MLX arrays can be performed on any of the supported
-   device types without transferring data.
-
-## Use Cases
-
-1. Enterprise Knowledge Management:
-   Large corporations can use this tool to create custom, domain-specific chatbots from their internal documentation. This allows employees to quickly access company-specific information, improving productivity and reducing time spent searching for answers.
-
-2. Specialized Customer Support:
-   Companies with complex products or services can use this to create an AI assistant that understands their specific offerings in detail. This can provide 24/7 customer support, handling a large volume of inquiries without human intervention.
-
-3. Rapid Onboarding and Training:
-   Organizations can use this tool to create interactive learning systems from their training materials. New employees or partners can then engage with an AI tutor that understands the company's processes, products, and policies in depth, accelerating the onboarding process.
-
-## Acknowledgement
-
-I would like to send my many thanks to:
-
-- The Apple Machine Learning Research team for the amazing MLX library.
-
-## Contributing
-
-Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request.
-
-## License
-
-This project is licensed under the [Apache 2.0](LICENSE).
-
-## Acknowledgements
-
-- [MLX](https://github.com/ml-explore/mlx) for the `mlx` package
-- [Llama.cpp](https://github.com/ggerganov/llama.cpp) for better inference
-- [OpenRouter](https://openrouter.ai/) and [Anthropic Claude](https://www.anthropic.com/) for alternative inference methods
-
-## Disclaimer
-
-This project has been primarily tested with the LLaMA-3-8B model. Using other models may result in poorly parsed JSON outputs. Please exercise caution and verify the generated data when using different models.
+The suite validates directory setup, document chunking, and argument guards; extend it as you add new pipeline behaviors.
